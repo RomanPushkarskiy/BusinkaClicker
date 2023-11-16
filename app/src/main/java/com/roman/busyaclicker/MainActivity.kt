@@ -3,33 +3,28 @@ package com.roman.busyaclicker
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModel
+import com.roman.busyaclicker.databinding.ActivityMainBinding
+
+
+class MainViewModel : ViewModel() {
+    var counter: Int = 0
+}
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var clickCounter: TextView
-    private lateinit var clickBtn: ImageButton
-    private var counter = 0
+    private val mainViewModel: MainViewModel by viewModels()
     private var mMediaPlayer: MediaPlayer? = null
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         clicksCounter()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("savedClicks", counter)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val restoredNumber = savedInstanceState.getInt("savedClicks", 0)
-        counter = restoredNumber
-        "Кошка нажата $counter раз".also { clickCounter.text = it }
-
+        updateText()
     }
 
     private fun playPurr() {
@@ -40,18 +35,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clicksCounter() {
-        clickCounter = findViewById(R.id.click_counter)
-        clickBtn = findViewById(R.id.btn_clicker)
-
-        clickBtn.setOnClickListener {
-            counter++
+        binding.btnClicker.setOnClickListener {
+            mainViewModel.counter++
             updateText()
-            if (counter == 100) playPurr()
+            if (mainViewModel.counter == 100) playPurr()
         }
     }
 
     private fun updateText() {
-        clickCounter.text = "Кошка нажата $counter раз"
+        binding.clickCounter.text = "Кошка нажата ${mainViewModel.counter} раз"
     }
 
 
